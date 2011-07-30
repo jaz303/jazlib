@@ -1,0 +1,23 @@
+#undef GEN_HASH_MALLOC
+#undef GEN_HASH_REALLOC
+#undef GEN_HASH_FREE
+#undef GEN_HASH_MAX_LOAD
+#undef GEN_HASH_BUCKET_SIZES
+#undef GEN_HASH_HASH_FUNC
+#undef GEN_HASH_KEY_CMP
+#undef GEN_HASH_KEY_COPY
+#undef GEN_HASH_KEY_FREE
+#undef GEN_HASH_VALUE_CMP
+#undef GEN_HASH_VALUE_COPY
+#undef GEN_HASH_VALUE_FREE
+
+#undef __gh_malloc
+#undef __gh_realloc
+#undef __gh_free
+#undef __gh_hash_key
+#undef __gh_key_cmp
+#undef __gh_key_copy
+#undef __gh_key_free
+#undef __gh_value_cmp
+#undef __gh_value_copy
+#undef __gh_value_free
