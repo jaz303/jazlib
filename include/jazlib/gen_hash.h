@@ -31,7 +31,7 @@
     #define GH_BUCKET_STATE(flags, ix)          ((flags[ix>>2]>>((ix&3)<<1))&3)
     #define GH_SET_BUCKET_STATE(flags, ix, s)   (flags[ix>>2]=(flags[ix>>2]&(~(3<<((ix&3)<<1))))|(s<<((ix&3)<<1)))
     
-    #define GH_DEBUG_PRINT(hsh)                 printf("b=%d occ=%d sz=%d ub=%d\n", (hsh)->n_buckets, (hsh)->n_occupied, (hsh)->size, (hsh)->upper_bound)
+    #define GH_DEBUG_PRINT(hsh)                 printf("b=%lu occ=%lu sz=%lu ub=%lu\n", (unsigned long)(hsh)->n_buckets, (unsigned long)(hsh)->n_occupied, (unsigned long)(hsh)->size, (unsigned long)(hsh)->upper_bound)
     
     #ifdef GH_DEBUG
         #define __gh_debug 1

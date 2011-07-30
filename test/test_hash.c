@@ -51,7 +51,7 @@ void check(hash_t *hsh) {
         }
     }
     if (sz != hsh->size) {
-        printf("size error (exp=%u,rep=%u)\n", (int)sz, hsh->size);
+        printf("size error (exp=%lu,rep=%lu)\n", sz, (unsigned long)hsh->size);
     }
 }
 
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
                     if (!table[i].in_table) {
                         assert(sz + 1 == hsh.size);
                     } else if (sz != hsh.size) {
-                        printf("expected=%u actual=%u\n", sz, hsh.size);
+                        printf("expected=%lu actual=%lu\n", (unsigned long)sz, (unsigned long)hsh.size);
                         assert(0);
                     }
                     table[i].in_table = 1;
