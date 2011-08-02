@@ -21,7 +21,8 @@ all: obj
 
 OBJS		=	src/common.o
 
-TEST_OBJS	=	test/test_hash.out
+TEST_OBJS	=	test/test_hash.out \
+				test/test_vector.out
 
 obj: $(OBJS)
 
