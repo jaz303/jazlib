@@ -37,6 +37,11 @@ int main(int argc, char *argv[]) {
     printf("vector size=%d\n", vec.size);
     printf("vector capacity=%d\n", vec.capacity);
     
+    vector_set(&vec, vec.size, 100);
+    
+    printf("vector size=%d\n", vec.size);
+    printf("vector capacity=%d\n", vec.capacity);
+    
     return 0;
 
 }

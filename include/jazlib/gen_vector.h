@@ -7,9 +7,9 @@
  *
  * my_vector.c
  * #include "gen_vector_reset.h"
- * #define GEN_VECTOR_CMP   strcmp
- * #define GEN_VECTOR_COPY  gen_strcpy
- * #define GEN_VECTOR_FREE  free
+ * #define GEN_VECTOR_VALUE_CMP   strcmp
+ * #define GEN_VECTOR_VALUE_COPY  gen_strcpy
+ * #define GEN_VECTOR_VALUE_FREE  free
  * #include "gen_vector.h"
  * GEN_VECTOR_INIT(my_vector, const char *);
  */
@@ -55,20 +55,23 @@
     #define __gv_free(ptr) free(ptr)
 #endif
 
-#ifndef GEN_VECTOR_DEFAULT_CAPACITY
-    #define GEN_VECTOR_DEFAULT_CAPACITY 16
+/* sizes that vector should grow to, default is to start at 16 then double */
+#ifndef GEN_VECTOR_SIZES
+    #define GEN_VECTOR_SIZES \
+        0,          16,         32,         64,         128,        256, \
+        512,        1024,       2048,       4096,       8192,       16384, \
+        32768,      65536,      131072,     262144,     524288,     1048576, \
+        2097152,    4194304,    8388608,    16777216,   33554432,   67108864, \
+        134217728,  268435456,  536870912,  1073741824
 #endif
 
-#ifndef GEN_VECTOR_GROW_FACTOR
-    #define GEN_VECTOR_GROW_FACTOR 2
-#endif
-
+/* threshold at which vector should shrink */
 #ifndef GEN_VECTOR_SHRINK_THRESHOLD
-    #define GEN_VECTOR_SHRINK_THRESHOLD 0.5
+    #define GEN_VECTOR_SHRINK_THRESHOLD 0.3
 #endif
 
 /*
- * function used to compare keys.
+ * function used to compare values.
  * should return 0 on equality, non-zero otherwise
  * if undefined, "==" is unused
  */
@@ -122,6 +125,11 @@
     value_t     type##_get(type##_t *vec, int ix);
     
 #define GEN_VECTOR_INIT(type, value_t) \
+    static const int type##_sizes[] = { \
+        GEN_VECTOR_SIZES \
+    }; \
+    static const int type##_n_sizes = (sizeof(type##_sizes)/sizeof(int)); \
+    \
     int type##_init(type##_t *vec) { \
         vec->values = NULL; \
         type##_clear(vec); \
@@ -168,15 +176,32 @@
     } \
     \
     int type##_set(type##_t *vec, int ix, value_t value) { \
+        size_t new_capacity = vec->capacity; \
         if (vec->capacity < ix + 1) { \
-            size_t new_capacity = (vec->capacity == 0) \
-                                    ? (GEN_VECTOR_DEFAULT_CAPACITY) \
-                                    : ((int)(vec->capacity * (float)GEN_VECTOR_GROW_FACTOR)); \
-            vec->values = __gv_realloc(vec->values, sizeof(value_t) * new_capacity); \
-            if (!vec->values) { \
-                return 0; \
+            int s_ix = type##_n_sizes - 1; \
+            while (s_ix >= 0) { \
+                if (type##_sizes[s_ix] <= vec->capacity) { \
+                    new_capacity = type##_sizes[s_ix + 1]; \
+                    break; \
+                } \
+                s_ix--; \
             } \
-            memset(vec->values + vec->capacity, 0, (new_capacity - vec->capacity) * sizeof(value_t)); \
+        } else if (vec->capacity > type##_sizes[1] && vec->size < vec->shrink_threshold) { \
+            int s_ix = 1; \
+            while (s_ix < type##_n_sizes) { \
+                if (type##_sizes[s_ix] > vec->size) { \
+                    new_capacity = type##_sizes[s_ix]; \
+                    break; \
+                } \
+                s_ix++; \
+            } \
+        } \
+        if (new_capacity != vec->capacity) { \
+            vec->values = __gv_realloc(vec->values, sizeof(value_t) * new_capacity); \
+            if (!vec->values) return 0; \
+            if (new_capacity > vec->capacity) { \
+                memset(vec->values + vec->capacity, 0, (new_capacity - vec->capacity) * sizeof(value_t)); \
+            } \
             vec->capacity = new_capacity; \
             vec->shrink_threshold = (int)((float)new_capacity * GEN_VECTOR_SHRINK_THRESHOLD); \
         } \
