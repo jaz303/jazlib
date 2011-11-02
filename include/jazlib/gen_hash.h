@@ -155,7 +155,7 @@
  * End Configuration
  */
  
-#define GEN_HASH_DECLARE(type, key_t, value_t) \
+#define GEN_HASH_DECLARE_STORAGE(type, key_t, value_t) \
     typedef struct type##_node type##_node_t; \
     struct type##_node { \
         key_t           key; \
@@ -169,8 +169,9 @@
         gh_hash_t       size; \
         unsigned char   *flags; \
         type##_node_t   *buckets; \
-    } type##_t; \
-    \
+    } type##_t;
+    
+#define GEN_HASH_DECLARE_INTERFACE(type, key_t, value_t) \
     int         type##_init(type##_t *hsh); \
     gh_hash_t   type##_find_slot(type##_t *hsh, key_t k); \
     int         type##_contains(type##_t *hsh, key_t k); \
@@ -178,6 +179,15 @@
     int         type##_put(type##_t *hsh, key_t k, value_t v); \
     int         type##_delete(type##_t *hsh, key_t k); \
     gh_hash_t   type##_size(type##_t *hsh);
+    
+#define GEN_HASH_DECLARE_STATIC_INTERFACE(type, key_t, value_t) \
+    static int          type##_init(type##_t *hsh); \
+    static gh_hash_t    type##_find_slot(type##_t *hsh, key_t k); \
+    static int          type##_contains(type##_t *hsh, key_t k); \
+    static int          type##_read(type##_t *hsh, key_t k, value_t *v); \
+    static int          type##_put(type##_t *hsh, key_t k, value_t v); \
+    static int          type##_delete(type##_t *hsh, key_t k); \
+    static gh_hash_t    type##_size(type##_t *hsh);
 
 #define GEN_HASH_INIT(type, key_t, value_t) \
     static const gh_hash_t type##_primes[] = { \
@@ -382,6 +392,10 @@
     gh_hash_t type##_size(type##_t *hsh) { \
         return hsh->size; \
     } \
+    
+#define GEN_HASH_DECLARE(type, key_t, value_t) \
+    GEN_HASH_DECLARE_STORAGE(type, key_t, value_t); \
+    GEN_HASH_DECLARE_INTERFACE(type, key_t, value_t);
 
 #define GEN_HASH(type, key_t, value_t) \
     GEN_HASH_DECLARE(type, key_t, value_t); \
