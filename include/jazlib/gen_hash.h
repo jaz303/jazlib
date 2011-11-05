@@ -3,6 +3,11 @@
  * 
  * Thoroughly and unashamedly inspired by attractivechaos's klib/khash
  * (https://github.com/attractivechaos/klib)
+ *
+ * TODO: explore constraining values to be pointers only, and using the 2 LSBs
+ * for storing bucket state, rather than auxiliary array.
+ * Pros: saves space, more readable - and probably faster - than the current bitshift nightmare.
+ * Cons: assumes pointers are 32-bit aligned, can't store non-pointer types as hash values.
  * 
  * my_hash.h:
  * #include "gen_hash.h"
