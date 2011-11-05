@@ -11,6 +11,6 @@ gh_hash_t hash_sdbm(const char* key);
  * Allocates space for, and copies, string v, and stores its pointer in *t
  * Returns 0 on failure, non-zero on success
  */
-int gen_strcpy(const char *v, const char **t);
+int gen_strcpy(void *context, const char *v, const char **t);
 
 #endif

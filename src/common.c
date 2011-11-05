@@ -23,7 +23,7 @@ gh_hash_t hash_sdbm(const char* key) {
     return hash;
 }
 
-int gen_strcpy(const char *v, const char **t) {
+int gen_strcpy(void *context, const char *v, const char **t) {
     if (!v) *t = NULL;
     else {
         char *out = malloc(strlen(v) + 1);
